@@ -1,0 +1,8 @@
+file,ec_class,original_sequences,invalid_sequences,short_sequences,valid_sequences
+uniprotkb_reviewed_true_AND_ec_1_AND_NO_2026_10_03.fasta.gz,1,34349,275,93,33981
+uniprotkb_reviewed_true_AND_ec_2_AND_NO_2026_10_03.fasta.gz,2,94618,223,27,94368
+uniprotkb_reviewed_true_AND_ec_3_AND_NO_2026_10_03.fasta.gz,3,62148,212,145,61791
+uniprotkb_reviewed_true_AND_ec_4_AND_NO_2026_10_03.fasta.gz,4,24608,120,19,24469
+uniprotkb_reviewed_true_AND_ec_5_AND_NO_2026_10_03.fasta.gz,5,15942,36,8,15898
+uniprotkb_reviewed_true_AND_ec_6_2026_10_03.fasta.gz,6,28253,20,3,28230
+uniprotkb_reviewed_true_AND_ec_7_2026_10_03.fasta.gz,7,14978,68,4,14906
