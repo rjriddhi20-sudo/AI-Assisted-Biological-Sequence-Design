@@ -69,21 +69,30 @@ The original compressed FASTA files are preserved without modification.
 
 ### 4. Raw Dataset Files
 
-The current raw dataset contains seven FASTA files:
+The raw dataset contains seven FASTA files corresponding to EC classes 1 through 7.
 
-1. EC 1
-2. EC 2
-3. EC 3
-4. EC 4
-5. EC 5
-6. EC 6
-7. EC 7
+The files are stored under:
 
-Exact filenames are recorded in dataset_info.csv.
+data/raw/
+
+Exact filenames can be inspected using the dataset inspection scripts.
+
+The raw dataset contains:
+
+| EC Class | Raw Sequences |
+|---|---:|
+| EC 1 | 34,349 |
+| EC 2 | 94,618 |
+| EC 3 | 62,148 |
+| EC 4 | 24,608 |
+| EC 5 | 15,942 |
+| EC 6 | 28,253 |
+| EC 7 | 14,978 |
+| **Total** | **274,896** |
 
 ---
 
-### 5. Dataset Statistics
+### 5. Initial Dataset Statistics
 
 The initial inspection produced the following results:
 
@@ -97,54 +106,173 @@ The initial inspection produced the following results:
 | EC 6 | 28,253 | 24,244 | 10 | 15,639 | 544.40 |
 | EC 7 | 14,978 | 12,565 | 11 | 5,058 | 400.14 |
 
-The complete inspection results are stored in:
+The dataset inspection report is stored in:
 
-src/dataset_info.csv
-
----
-
-### 6. File Format
-
-The raw files use compressed FASTA format:
-
-.fasta.gz
-
-Each FASTA record contains:
-
-1. A header beginning with `>`
-2. A UniProt accession
-3. A UniProt entry name
-4. Protein name
-5. Organism information
-6. Additional UniProt metadata
-7. Protein amino-acid sequence
-
-Example:
-
->sp|ACCESSION|ENTRY_NAME Protein name OS=Organism GN=Gene PE=1 SV=1
-
-The sequence consists primarily of one-letter amino-acid symbols.
+dataset_info.csv
 
 ---
 
-### 7. Important Metadata
+### 6. Preprocessing
 
-The FASTA headers may contain fields including:
+The preprocessing pipeline performs quality filtering and duplicate removal while leaving the original raw files unchanged.
 
-- UniProt accession
-- Entry name
-- Protein name
-- Organism
-- NCBI taxonomy identifier
-- Gene name
-- Protein existence evidence
-- Sequence version
+The preprocessing results were:
 
-These fields should be preserved when the processed dataset is created.
+| EC Class | Original | Invalid Removed | Short Removed | Valid |
+|---|---:|---:|---:|---:|
+| EC 1 | 34,349 | 275 | 93 | 33,981 |
+| EC 2 | 94,618 | 223 | 27 | 94,368 |
+| EC 3 | 62,148 | 212 | 145 | 61,791 |
+| EC 4 | 24,608 | 120 | 19 | 24,469 |
+| EC 5 | 15,942 | 36 | 8 | 15,898 |
+| EC 6 | 28,253 | 20 | 3 | 28,230 |
+| EC 7 | 14,978 | 68 | 4 | 14,906 |
+
+Across all classes:
+
+- Raw sequences: 274,896
+- Invalid sequences removed: 954
+- Short sequences removed: 299
+- Sequences before deduplication: 273,643
+- Duplicate sequences removed: 41,716
+- Final processed sequences: 231,927
+
+The preprocessing pipeline requires valid sequences to use the standard 20 amino-acid alphabet and to have a minimum length of 20.
 
 ---
 
-### 8. Raw Data Policy
+### 7. Final Processed Dataset
+
+The final processed dataset contains:
+
+**231,927 unique protein sequences**
+
+Final class distribution:
+
+| EC Class | Sequences | Percentage |
+|---|---:|---:|
+| EC 1 | 29,546 | 12.74% |
+| EC 2 | 79,603 | 34.32% |
+| EC 3 | 52,685 | 22.72% |
+| EC 4 | 20,369 | 8.78% |
+| EC 5 | 13,265 | 5.72% |
+| EC 6 | 23,993 | 10.35% |
+| EC 7 | 12,466 | 5.37% |
+| **Total** | **231,927** | **100%** |
+
+Final sequence length statistics:
+
+| Statistic | Value |
+|---|---:|
+| Minimum length | 20 |
+| Maximum length | 35,213 |
+| Average length | 420.99 |
+
+The final processed dataset contains no duplicate sequences and no cross-label conflicts.
+
+---
+
+### 8. Processed Dataset Format
+
+The processed dataset uses the following columns:
+
+| Column | Description |
+|---|---|
+| sequence | Protein amino-acid sequence |
+| ec_class | Top-level EC class label from 1 to 7 |
+| length | Protein sequence length |
+
+The main processed dataset is:
+
+data/processed/protein_sequences.csv
+
+Additional processed files are:
+
+data/processed/train.csv
+
+data/processed/validation.csv
+
+data/processed/test.csv
+
+---
+
+### 9. Dataset Quality Checks
+
+The processed dataset analysis confirmed:
+
+- Total sequences: 231,927
+- Unique sequences: 231,927
+- Duplicate sequences: 0
+- Sequences with multiple EC labels: 0
+- Minimum sequence length: 20
+- All seven EC classes are present.
+
+These checks were performed using the dataset analysis and inspection scripts.
+
+---
+
+### 10. Train / Validation / Test Split
+
+The processed dataset was divided using a stratified split with random seed 42.
+
+| Dataset | Sequences | Percentage |
+|---|---:|---:|
+| Training | 162,347 | 70.00% |
+| Validation | 34,784 | 15.00% |
+| Testing | 34,796 | 15.00% |
+| **Total** | **231,927** | **100%** |
+
+The class distribution was preserved across the three datasets.
+
+Generated files:
+
+data/processed/train.csv
+
+data/processed/validation.csv
+
+data/processed/test.csv
+
+---
+
+### 11. Split Quality Checks
+
+The train, validation and test datasets were inspected after splitting.
+
+All three datasets contain the same columns:
+
+- sequence
+- ec_class
+- length
+
+No missing values were found.
+
+All seven EC classes are present in each dataset.
+
+Sequence overlap checks produced:
+
+| Comparison | Overlapping Sequences |
+|---|---:|
+| Train and Validation | 0 |
+| Train and Test | 0 |
+| Validation and Test | 0 |
+
+Therefore, no identical sequence was found across the three dataset splits.
+
+---
+
+### 12. Dataset Imbalance
+
+The seven EC classes do not contain equal numbers of sequences.
+
+EC 2 is the largest class with 79,603 sequences (34.32%).
+
+EC 5 and EC 7 are smaller classes with 13,265 (5.72%) and 12,466 (5.37%) sequences respectively.
+
+This class imbalance should be considered during the AI/ML analysis phase.
+
+---
+
+### 13. File and Data Policy
 
 The files in:
 
@@ -163,51 +291,27 @@ No:
 
 should be performed directly on the raw files.
 
-All preprocessing must produce new files under:
+All preprocessing operations produce new files under:
 
 data/processed/
 
----
-
-### 9. Sequence Quality Observations
-
-The initial inspection detected some sequences containing symbols such as:
-
-B, U, X and Z
-
-These characters must not be removed from the raw dataset.
-
-Their treatment will be decided during the preprocessing phase.
-
-The raw sequences remain unchanged.
+Large raw and generated processed CSV datasets are excluded from Git version control using .gitignore.
 
 ---
 
-### 10. Dataset Imbalance
+### 14. Proposed Machine Learning Task
 
-The seven EC classes do not contain equal numbers of sequences.
-
-EC 2 contains substantially more sequences than some of the other classes.
-
-Therefore, the complete raw dataset should not automatically be used directly for model training.
-
-The preprocessing phase should evaluate class balancing and construct an appropriate training dataset.
-
----
-
-### 11. Proposed Machine Learning Task
-
-The planned model input is:
+The model input is:
 
 Protein amino-acid sequence
 
-The planned model output is:
+The model output is:
 
 One of seven EC top-level classes:
 
 1, 2, 3, 4, 5, 6 or 7
 
-Possible later approaches include:
+Possible approaches for the AI/ML stage include:
 
 - sequence encoding
 - pretrained protein embeddings
@@ -218,7 +322,7 @@ The final model architecture will be selected during the AI/ML analysis phase.
 
 ---
 
-### 12. Scientific Scope
+### 15. Scientific Scope
 
 The prototype predicts the broad top-level EC class associated with a protein sequence.
 
@@ -234,21 +338,21 @@ The project is a computational prototype for sequence analysis and prediction.
 
 ---
 
-### 13. Dataset Limitations
+### 16. Dataset Limitations
 
 Important limitations include:
 
 1. The EC classes are broad functional categories.
 2. The classes are imbalanced.
-3. Some sequences contain ambiguous/non-standard amino-acid symbols.
-4. Multiple sequences may represent highly similar proteins.
-5. Sequence similarity can cause data leakage if train and test sets are not carefully separated.
-6. Computational predictions do not constitute experimental biological validation.
-7. UniProt annotations depend on available biological evidence and annotation procedures.
+3. The dataset is based on reviewed UniProtKB / Swiss-Prot entries.
+4. Sequence similarity may still exist between different proteins even after exact duplicate removal.
+5. Computational predictions do not constitute experimental biological validation.
+6. UniProt annotations depend on available biological evidence and annotation procedures.
+7. The current task predicts top-level EC classes rather than detailed EC subclasses.
 
 ---
 
-### 14. Reproducibility
+### 17. Reproducibility
 
 Dataset download date:
 
@@ -258,54 +362,86 @@ Database:
 
 UniProtKB / Swiss-Prot
 
-Raw files:
+Raw data directory:
 
 data/raw/
 
-Inspection script:
+Processed data directory:
 
-src/inspect_dataset.py
+data/processed/
 
-Validation script:
+Scripts used during Member 2 processing:
 
 src/validate_labels.py
 
-Inspection report:
+src/inspect_dataset.py
 
-src/dataset_info.csv
+src/preprocess_dataset.py
+
+src/analyze_processed_dataset.py
+
+src/split_dataset.py
+
+src/inspect_splits.py
+
+Dataset inspection report:
+
+dataset_info.csv
+
+Random seed used for dataset splitting:
+
+42
 
 ---
 
-### 15. Member 1 → Member 2 Handoff
+### 18. Member 1 -> Member 2 Handoff
 
-Member 2 receives:
+Member 2 received:
 
 1. Original raw FASTA files
-2. Dataset inspection report
+2. Dataset inspection information
 3. Dataset documentation
 4. Sequence type definition
 5. EC class definitions
 6. Prediction task definition
 
-Member 2 must create processed copies and must not modify the raw files.
+Member 2 created the processed dataset without modifying the original raw FASTA files.
 
 ---
 
-### 16. Expected Processed Dataset
+### 19. Member 2 -> Member 3 Handoff
 
-The processed dataset should contain suitable protein sequences with their corresponding EC class labels.
+Member 2 processing is complete.
 
-Expected conceptual format:
+The AI/ML stage receives the following dataset definition:
 
-| accession | sequence | ec_class |
-|---|---|---|
-| UniProt ID | amino-acid sequence | 1–7 |
+Input:
+Protein amino-acid sequence
 
-Additional metadata such as protein name, organism and gene may be retained where useful.
+Target:
+Top-level EC class
+
+Classes:
+1, 2, 3, 4, 5, 6, 7
+
+Training set:
+162,347 sequences
+
+Validation set:
+34,784 sequences
+
+Test set:
+34,796 sequences
+
+The three splits contain no identical sequence overlap.
+
+The final processed dataset contains 231,927 unique sequences.
+
+The processed CSV files are intentionally excluded from Git because of their size. The team should transfer the required processed data to the Member 3 environment separately.
 
 ---
 
-### 17. Final Prediction Definition
+### 20. Final Prediction Definition
 
 Given a protein amino-acid sequence:
 
@@ -320,4 +456,4 @@ Possible outputs:
 
 `1, 2, 3, 4, 5, 6, 7`
 
-This definition is the basis for the subsequent data processing and AI/ML phases.
+This definition is the basis for the subsequent AI/ML analysis and sequence prediction/design phases.
