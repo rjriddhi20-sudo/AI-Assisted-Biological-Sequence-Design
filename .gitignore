@@ -8,6 +8,12 @@ __pycache__/
 venv/
 env/
 
+# Large generated processed datasets
+data/processed/protein_sequences.csv
+data/processed/train.csv
+data/processed/validation.csv
+data/processed/test.csv
+
 # Jupyter
 .ipynb_checkpoints/
 
