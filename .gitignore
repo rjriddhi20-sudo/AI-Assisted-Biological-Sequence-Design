@@ -33,3 +33,7 @@ Thumbs.db
 
 # VS Code
 .vscode/
+# Generated feature datasets
+data/processed/features_train.csv
+data/processed/features_validation.csv
+data/processed/features_test.csv

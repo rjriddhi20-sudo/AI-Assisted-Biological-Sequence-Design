@@ -384,6 +384,8 @@ src/split_dataset.py
 
 src/inspect_splits.py
 
+src/features.py
+
 Dataset inspection report:
 
 dataset_info.csv
@@ -411,7 +413,7 @@ Member 2 created the processed dataset without modifying the original raw FASTA 
 
 ### 19. Member 2 -> Member 3 Handoff
 
-Member 2 processing is complete.
+Member 2 data processing and feature extraction are complete.
 
 The AI/ML stage receives the following dataset definition:
 
@@ -437,7 +439,42 @@ The three splits contain no identical sequence overlap.
 
 The final processed dataset contains 231,927 unique sequences.
 
-The processed CSV files are intentionally excluded from Git because of their size. The team should transfer the required processed data to the Member 3 environment separately.
+### Feature representation
+
+Amino Acid Composition (AAC) was used as the baseline sequence representation.
+
+For each protein sequence, the frequency of each of the 20 standard amino acids was calculated:
+
+A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y
+
+Each amino-acid feature is calculated as:
+
+amino-acid count / sequence length
+
+The sequence length is included as an additional numerical input feature.
+
+Therefore, each sequence has:
+
+- 20 amino-acid composition features
+- 1 sequence-length feature
+- 21 input features in total
+- 1 target label: ec_class
+
+Feature files generated:
+
+data/processed/features_train.csv
+
+data/processed/features_validation.csv
+
+data/processed/features_test.csv
+
+The feature datasets contain no missing values, and all seven EC classes are present in the training feature dataset.
+
+The generated feature CSV files are intentionally excluded from Git because of their size. The required feature data should be transferred to the Member 3 environment separately.
+
+The feature extraction implementation is:
+
+src/features.py
 
 ---
 
