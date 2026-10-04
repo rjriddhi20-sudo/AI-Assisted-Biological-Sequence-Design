@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Large generated processed datasets
+data/processed/protein_sequences.csv
+data/processed/train.csv
+data/processed/validation.csv
+data/processed/test.csv
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Raw biological dataset
+data/raw/*.fasta
+data/raw/*.fasta.gz
+data/raw/*.fa
+data/raw/*.fa.gz
+
+# Temporary files
+*.tmp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/data/processed/random_forest_final.joblib
+data/processed/random_forest_final.joblib
