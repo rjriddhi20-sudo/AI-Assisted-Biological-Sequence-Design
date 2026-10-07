@@ -22,10 +22,21 @@ data/raw/*.fasta
 data/raw/*.fasta.gz
 data/raw/*.fa
 data/raw/*.fa.gz
+data/raw/
+data/raw.zip
+
+# Large processed datasets
+data/processed/protein_sequences.csv
+data/processed/train.csv
+data/processed/validation.csv
+data/processed/test.csv
+
 
 # Temporary files
 *.tmp
 *.log
+member2_files/
+member3_files/
 
 # OS files
 .DS_Store
@@ -33,3 +44,11 @@ Thumbs.db
 
 # VS Code
 .vscode/
+
+# Member 4 generated files
+models/*.joblib
+results/*.csv
+results/test_*.png
+
+# Large model files
+models/*.joblib
